@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Convert audiosprite to SoundJS</title>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<!-- Compiled and minified CSS -->
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+
+	    <!-- Compiled and minified JavaScript -->
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+	</head>
+	<body>
+
+		<div class="container-fluid">
+			<h1>Convert Audiosprite JSON to a SoundJS Manifest</h1>
+			<p>! We will use the MP3 format at the moment because this one is the most supported by the browsers, you can change it to your liking !</p>
+			<div class="row">
+				<div class="col s6 input-field" id='sourceDiv'>
+					<h4>Source</h4>
+					<a class="waves-effect waves-light btn" id='convertBtn'>Convert</a>
+					<textarea id="source" class="materialize-textarea" placeholder="Paste your Audiosprite here"></textarea>
+					</form>
+				</div>
+				<div class="col s6">
+					<h4>Converted...</h4>
+					<pre id='converted'>
+					</pre>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#convertBtn").click(function(event){
+					event.preventDefault();
+					let source = JSON.parse($('#source').val());
+					console.log(source);
+					let converted = {};
+					for(var i = 0; i < source.resources.length; i++){
+						if(/mp3$/.test(source.resources[i])){
+							converted.src = source.resources[i];
+							break;
+						}
+					}
+
+					// Loop through the keys
+					converted.data = {
+						"audioSprite": []
+					};
+
+					for(var key in source.spritemap){
+						converted.data.audioSprite.push({
+							"id": key,
+							"startTime": source.spritemap[key].start * 1000,
+							"duration": Math.ceil((source.spritemap[key].end - source.spritemap[key].start) * 1000)
+						});
+					}
+
+					$('#converted').text(JSON.stringify(converted, null, "\t"));
+					console.log(converted);
+					// converted.src = source.resources
+
+				});
+			});
+		</script>
+	</body>
+</html>
