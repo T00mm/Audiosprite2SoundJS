@@ -25,13 +25,32 @@
 				</div>
 				<div class="col s6">
 					<h4>Converted...</h4>
+					<a class="waves-effect waves-light btn" id='selectAllBtn'>Select all</a>
 					<pre id='converted'>
 					</pre>
 				</div>
 			</div>
 		</div>
 		<script type="text/javascript">
+		function selectElementText(el, win) {
+		    win = win || window;
+		    var doc = win.document, sel, range;
+		    if (win.getSelection && doc.createRange) {
+		        sel = win.getSelection();
+		        range = doc.createRange();
+		        range.selectNodeContents(el);
+		        sel.removeAllRanges();
+		        sel.addRange(range);
+		    } else if (doc.body.createTextRange) {
+		        range = doc.body.createTextRange();
+		        range.moveToElementText(el);
+		        range.select();
+		    }
+		}
 			$(document).ready(function(){
+				$('#selectAllBtn').click(function(event){
+					selectElementText(document.getElementById('converted'));
+				});
 				$("#convertBtn").click(function(event){
 					event.preventDefault();
 					let source = JSON.parse($('#source').val());
@@ -58,8 +77,6 @@
 					}
 
 					$('#converted').text(JSON.stringify(converted, null, "\t"));
-					console.log(converted);
-					// converted.src = source.resources
 
 				});
 			});
